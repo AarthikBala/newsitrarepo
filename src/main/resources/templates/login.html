@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Page</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        position: relative;
+        padding: 0;
+    }
+    h2{
+        color:#0056b3;
+    }
+    .container {
+        position:relative;
+        top:50px;
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    label{
+        width: 100%;
+        text-align: left;
+    }
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        background-color: #0056b3;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+    input[type="submit"]:hover {
+        background-color: #004080;
+    }
+    .forgot-password {
+        text-align: left;
+        margin-top:15px;
+        margin-bottom: 10px;
+    }
+    form{
+        color: #0056b3;
+        text-align: left;
+    }
+    img{
+        filter:opacity(0.5);
+        position: relative;
+        float: right;
+        width: 30px;
+        height: 30px;
+        top: -41px;
+        right: 6px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Login Form</h2>
+    <form method="post" action="" id="myform">
+        <label for="phone">Phone Number:</label>
+        <input type="text" id="phone" name="phone" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <img src="images/visible.png" class="toggle-password" id="toggleConfirmPassword" onclick="visiblity()">
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember">Remember Me</label>
+        <input type="submit" value="Login">
+        <div class="forgot-password">
+            <a href="#">Forgot Password?</a>
+        </div>
+    </form>
+</div>
+<script>
+    var form = document.getElementById('myform');
+    var phone = document.getElementById("phone");
+    var a = document.getElementById('password');
+    function visiblity(){
+        var b = document.getElementById('toggleConfirmPassword');
+        if(a.type === "password"){
+            a.type = "text";
+            b.src = "images/invisible.png";
+        }else{
+            a.type = "password";
+            b.src = "images/visible.png";
+        }
+    }
+
+    function login(event){
+        event.preventDefault();
+        console.log("entered");
+        fetch('/logger',{
+        method:'POST',
+        headers:{"Content-type":"application/json"},
+        body:JSON.stringify({"phone": parseInt(phone.value),"password":a.value.toString()}
+        )}).then(response => {
+            response.text();
+        }).then(data => { window.location.href = data;});
+    }
+    form.addEventListener('submit',login);
+</script>
+</body>
+</html>

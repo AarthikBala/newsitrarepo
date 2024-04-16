@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signup Page</title>
+<style>
+    body {
+        background-color: #f0f0f0;
+        position: relative;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        position: absolute;
+        right: 40%;
+        left: 40%;
+        top:40px;
+    }
+    .container2{
+        width: 400px;
+        padding: 20px;
+        padding-top:10px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        color: #0056b3;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="checkbox"] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        background-color: #0056b3;
+        color: #ffffff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+    input[type="submit"]:hover {
+        background-color: #004080;
+    }
+    label {
+        color: #0056b3;
+    }
+    h5,input[type="checkbox"] {
+        width: auto;
+        display: inline;
+    }
+
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .toggle-password {
+        filter:opacity(0.5);
+        position: relative;
+        float: right;
+        width: 30px;
+        height: 30px;
+        top: -41px;
+        right: 6px;
+        cursor: pointer;
+    }
+    #strengthBar {
+        display: inline-block;
+        width: 78%;
+        height: 5px;
+        background-color: #ddd;
+        border-radius: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    #strengthBar div {
+        height: 100%;
+        border-radius: 5px;
+        background-color: red;
+    }
+    #strengthcontainer{
+        width: 100%;
+    }
+    #strengthText{
+        font-weight: bold;
+        text-align: center;
+        font-size: 12px;
+        float: right;
+        padding: none;
+        margin: none;
+        display: inline-block;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="container2">
+    <h2>Signup Form</h2>
+    <form action="" method="post">
+        <label for="fname">First Name:</label>
+        <input type="text" id="fname" name="firstName" required>
+
+        <label for="lname">Last Name:</label>
+        <input type="text" id="lname" name="lastName" required>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phoneNumber" required>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
+
+        <label for="altphone">Alternative Number:</label>
+        <input type="tel" id="altphone" name="alterPhoneNumber">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" oninput="checkPasswordStrength(this.value)" required>
+        <img src="images/visible.png" class="toggle-password" id="togglePassword" onclick="togglePasswordVisibility('password')">
+
+        <div class="strengthcontainer">
+            <div id="strengthBar">
+                <div id="strength"></div>
+            </div>
+            <div id="strengthText">Weak</div>
+        </div>        
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" oninput="checkPasswordMatch()" required>
+        <img src="images/visible.png" class="toggle-password" id="toggleConfirmPassword" onclick="togglePasswordVisibility('confirmPassword')">
+        <p id="matchText"></p>
+        <input type="checkbox" id="terms" name="terms" required >
+        <h5 for="terms">I accept the terms and conditions</h5>
+
+        <input type="submit" value="Signup" onclick="signup()">
+    </form>
+</div>
+</div>
+<script>
+    function signup(){
+        var firstname = document.getElementById("fname").value;
+        var lastname = document.getElementById("lname").value;
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phone").value;
+        var altphone = document.getElementById("altphone").value;
+        var password = document.getElementById("password").value;
+        var dob = document.getElementById("dob").value;
+
+        fetch('/adduser',{method:'POST',
+        headers:{
+        'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({'id':0,'firstName' : firstname, 'lastName' : lastname,'email' : email,'password' : password,'phoneNumber' : parseInt(phone),'alternaPhoneNumber' : parseInt(altphone),'dob' : Date.parse(dob)})
+        }).then(response => {
+            window.location.href = "http://localhost:8080/login";
+        })
+    }
+    function checkPasswordStrength(password) {
+        var strengthBar = document.getElementById("strength");
+        var strengthText = document.getElementById("strengthText");
+    
+        var strength = 0;
+    
+        if (password.match(/[a-z]+/)) {
+            strength += 1;
+        }
+        if (password.match(/[A-Z]+/)) {
+            strength += 1;
+        }
+        if (password.match(/[0-9]+/)) {
+            strength += 1;
+        }
+        if (password.match(/[$@#&!]+/)) {
+            strength += 1;
+        }
+        if (password.length >= 8) {
+            strength += 1;
+        }
+    
+        switch (strength) {
+            case 0:
+                strengthBar.style.backgroundColor = "red";
+                strengthText.textContent = "Weak";
+                break;
+            case 1:
+                strengthBar.style.backgroundColor = "orange";
+                strengthText.textContent = "Moderate";
+                break;
+            case 2:
+                strengthBar.style.backgroundColor = "yellow";
+                strengthText.textContent = "Fair";
+                break;
+            case 3:
+                strengthBar.style.backgroundColor = "lightgreen";
+                strengthText.textContent = "Strong";
+                break;
+            case 4:
+                strengthBar.style.backgroundColor = "green";
+                strengthText.textContent = "Very Strong";
+                break;
+            default:
+                break;
+        }
+    
+        strengthBar.style.width = (strength * 20) + "%";
+    }
+    
+    function togglePasswordVisibility(inputId) {
+        var input = document.getElementById(inputId);
+        var icon = document.getElementById("toggle" + inputId.charAt(0).toUpperCase() + inputId.slice(1));
+        if (input.type === "password") {
+            input.type = "text";
+            icon.src = "images/invisible.png";
+        } else {
+            input.type = "password";
+            icon.src = "images/visible.png";
+        }
+    }
+    
+    function checkPasswordMatch() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+        var matchText = document.getElementById("matchText");
+    
+        if (password !== confirmPassword) {
+            matchText.textContent = "Passwords do not match";
+            matchText.style.color = "red";
+        } else {
+            matchText.textContent = "Passwords match";
+            matchText.style.color = "green";
+        }
+    }
+    </script>
+</body>
+</html>
